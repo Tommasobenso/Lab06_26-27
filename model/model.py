@@ -36,6 +36,24 @@ class DepositoStrumenti:
             :return: una lista con tutti gli strumenti presenti oppure None
         """
         # TODO
+        cnx = get_connection()
+        strumenti = []
+
+        if cnx is not None:
+            cursore = cnx.cursor(dictionary=True)
+            cursore.execute("SELECT * FROM strumento")
+
+            for row in cursore:
+                strumenti.append(Strumento(row["codice"], row["tipo"], row["marca"], row["anno_acquisto"], row["valore"], row["disponibile"]))
+            cursore.close()
+            cnx.close()
+            return strumenti
+
+        else:
+            print("Connessione non trovata")
+            return None
+
+
 
     def cerca_strumenti_per_tipo(self, tipo) -> list[Strumento] | None:
         """
@@ -44,3 +62,22 @@ class DepositoStrumenti:
             :return: una lista con tutti gli strumenti del tipo indicato oppure None
         """
         # TODO
+        cnx = get_connection()
+        strumenti = []
+        query = """SELECT * FROM strumento 
+                    WHERE tipo = %s"""
+
+        if cnx is not None:
+            cursore = cnx.cursor(dictionary=True)
+            cursore.execute(query, (tipo,))
+
+            for row in cursore:
+                strumenti.append(Strumento(row["codice"], row["tipo"], row["marca"], row["anno_acquisto"], row["valore"],row["disponibile"]))
+            cursore.close()
+            cnx.close()
+            return strumenti
+
+        else:
+            print("Connessione non trovata")
+            return None
+
